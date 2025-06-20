@@ -4,82 +4,104 @@
 
 
 // double dotProduct(const std::vector<double>& inputs, const std::vector<double>& weights);
-std::vector<double> getLayerOutput(const std::vector<double>& inputs, const std::vector<std::vector<double>>& weights, const std::vector<double>& bias);
-
+std::vector<double> vector_matrix_product(const std::vector<std::vector<double>>& matrix, const std::vector<double>& vector);
 std::vector<std::vector<double>> transposition(const std::vector<std::vector<double>>& matrix);
+auto matrix_product(const std::vector<std::vector<double>> matrix1, const std::vector<std::vector<double>> matrix2);
+
+
+
+void print_vector(const auto& vector);
 void print_matrix(const std::vector<std::vector<double>>& matrix);
 
 
 int main() {
     
     // making a single neuron
-    std::vector<double> inputs{1.0, 2.0, 3.0, 2.5}; 
 
-    // for each neuron we have multiple biases
-    std::vector<std::vector<double>> weights    { {0.2, 0.8, -0.5, 1}, 
-                                                {0.5, -0.91, 0.26, -0.5},
-                                                {-0.26, -0.27, 0.17, 0.87}};
+    std::vector<double> test_vector{1, 2, 3};
+    std::vector<std::vector<double>> test_matrix{{1, 2, 3},
+                                              {4, 5, 6}};
+
+    auto t {vector_matrix_product(test_matrix, test_vector)};
+
+    print_vector(t);
 
     
-   
-    std::vector<double> bias{2, 3, 0.5}; // for each neuron we have a single bias
-
-    std::vector<double> layer_output{getLayerOutput(inputs, weights, bias)};
-
-    for( double output : layer_output) {
-        std::cout << output << "\n";
-    }
-
-
-    std::vector<std::vector<double>> t {transposition(weights)};
-    print_matrix(t);
-
-
 
     return 0;
 }
 
-// double dotProduct(const std::vector<double>& inputs, const std::vector<double>&weights) {
+
+std::vector<double> vector_matrix_product(const std::vector<std::vector<double>>& matrix, const std::vector<double>& vector){
+
+    int matrix_height{static_cast<int>(matrix.size())};
+    int matrix_width{static_cast<int>(matrix[0].size())};
+
+    // create an empty matrix
+    std::vector<double> product {}; // syntax for initializing an empty list , does not assign it a garbage value
 
 
-//     // note this is just computing the dot product then adding a bias on top
-//     int counter{0};
-//     double sum{};
-//     for(auto input : inputs) {
-//         sum += input * weights[counter];
-//         counter++;
 
-//     }
+    /*
+    [1 2] . [1] = 1 [1] + 2 [2]
+    [3 4] . [2]     [3]     [4]
 
-//     return sum;
-// }
+    [1 2]   [1]     [1]     [2]
+    [2 4] . [2] = 1 [2] + 2 [4]
+    [5 6]   [3]     [5]     [6]
+    
+    
+    
+    */
 
-// uses move semantics so can return
-std::vector<double> getLayerOutput(const std::vector<double>& inputs, const std::vector<std::vector<double>>& weights, const std::vector<double>& bias){
+    int vector_size{static_cast<int>(vector.size())};
 
-    int number_of_neurons{static_cast<int>(bias.size())};
-    std::vector<double> output{};
+    for(int row = 0; row < matrix_height; row++) {
+        
+        double sum {0}; 
 
-    // for (int i = 0; i < number_of_neurons; i++) {
-    //     double neuron_output{dotProduct(inputs, weights[i])};
-    //     neuron_output += bias[i];
+        for(int j = 0; j < vector_size; j++) {
+            sum += vector[j] * matrix[row][j];
+        }
+        product.push_back(sum); // can just append to the back
+
+    }
+
+    return product;
+
+    
 
 
-    //     output.push_back(neuron_output);
 
 
-    // }
-
-    return output;
 }
 
 
-// std::vector<std::vector<double>> dotProduct(const std::vector<std::vector<double>> matrix1, const std::vector<std::vector<double>> matrix2) {
-//     // first need to get the size of final matrix using he 
-//     i
+auto matrix_product(const std::vector<std::vector<double>> matrix1, const std::vector<std::vector<double>> matrix2) {
+    // first need to get the size of final matrix using he 
+    int matrix_1_height{static_cast<int>(matrix1.size())}; 
+    int matrix_1_width{static_cast<int>(matrix1[0].size())};
+
+    int matrix_2_height{static_cast<int>(matrix2.size())};
+    int matrix_2_width{static_cast<int>(matrix2[0].size())};
+
+    // need to make an empty matrix
+    if(matrix_1_width != matrix_2_height){
+        return;
+
+    }
+
+    // need to make an empty matrix
+    std::vector<std::vector<double>> product(matrix_1_height, std::vector<double>(0, matrix_2_height));
 
 
-// }
+
+
+
+
+
+
+}
 std::vector<std::vector<double>> transposition(const std::vector<std::vector<double>>& matrix) {
     int row_size {static_cast<int>(matrix.size())};
     int col_size{static_cast<int>(matrix[0].size())};
@@ -116,5 +138,10 @@ void print_matrix(const std::vector<std::vector<double>>& matrix) {
     }
 }
 
+void print_vector(const auto& vector) {
+    for(auto item : vector){
+        std::cout << item << "\n";
+    }
+}
 
 
