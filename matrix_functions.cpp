@@ -1,49 +1,9 @@
 #include <iostream>
 #include <vector>
 #include <tuple>
+#include "matrix_functions.h"
 
 
-// double dotProduct(const std::vector<double>& inputs, const std::vector<double>& weights);
-std::vector<double> vector_matrix_product(const std::vector<std::vector<double>>& matrix, const std::vector<double>& vector);
-std::vector<std::vector<double>> transposition(const std::vector<std::vector<double>>& matrix);
-std::vector<double> get_col(const auto& matrix, const int col_number);
-void add_to_col(auto& matrix, const auto& vector, int col_num);
-std::vector<std::vector<double>> matrix_product(const auto& matrix1, const auto& matrix2);
-
-
-
-void print_vector(const auto& vector);
-void print_matrix(const std::vector<std::vector<double>>& matrix);
-
-
-int main() {
-    
-    // making a single neuron
-    std::vector<std::vector<double>> inputs{
-        {1.0, 2.0, 3.0, 2.5},
-        {2.0, 5.0, -1.0, 2.0},
-        {-1.5, 2.7, 3.3, -0.8}
-    };
-
-    std::vector<std::vector<double>> weights{
-        {0.2, 0.8, -0.5, 1.0},
-        {0.5, -0.91, 0.26, -0.5},
-        {-0.26, -0.27, 0.17, 0.87}
-
-    };
-
-    
-
-    auto tWeights{transposition(weights)};
-
-
-    std::vector<std::vector<double>> output{matrix_product(inputs, tWeights)};
-    print_matrix(output);
-
-    
-
-    return 0;
-}
 
 
 std::vector<double> vector_matrix_product(const std::vector<std::vector<double>>& matrix, const std::vector<double>& vector){
