@@ -46,8 +46,8 @@ std::vector<double> vector_matrix_product(const std::vector<std::vector<double>>
 
 }
 
+std::vector<std::vector<double>> matrix_product(const std::vector<std::vector<double>>& matrix1, const std::vector<std::vector<double>>& matrix2){
 
-std::vector<std::vector<double>> matrix_product(const auto& matrix1, const auto& matrix2) {
     // first need to get the size of final matrix using he 
     int matrix_1_height{static_cast<int>(matrix1.size())}; 
     int matrix_1_width{static_cast<int>(matrix1[0].size())};
@@ -133,6 +133,30 @@ std::vector<std::vector<double>> transposition(const std::vector<std::vector<dou
 
 }
 
+
+std::vector<std::vector<double>> vector_matrix_addition(const std::vector<std::vector<double>>& matrix, const std::vector<double>& vector){
+    int matrix_width{static_cast<int>(matrix[0].size())};
+    int matrix_height{static_cast<int>(matrix.size())};
+
+    // create an empty matrix of shape of the original matrix
+    std::vector<std::vector<double>> solution(matrix_height, std::vector<double>(matrix_width, 0.0));
+
+    int vector_index{0};
+    for(int i = 0; i < matrix_height; i++) {
+        for(int j = 0; j < matrix_width; j++) {
+            solution[i][j] = vector[vector_index] + matrix[i][j];
+
+        }
+        vector_index++;
+
+    }
+
+    return solution;
+
+
+
+}
+
 void print_matrix(const std::vector<std::vector<double>>& matrix) {
     for(std::vector<double> row : matrix) {
         for(double col : row) {
@@ -144,7 +168,7 @@ void print_matrix(const std::vector<std::vector<double>>& matrix) {
     }
 }
 
-void print_vector(const auto& vector) {
+void print_vector(const std::vector<double>& vector) {
     for(auto item : vector){
         std::cout << item << "\n";
     }

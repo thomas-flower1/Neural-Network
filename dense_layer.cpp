@@ -6,12 +6,13 @@
 class Dense_Layer {
     private:
         std::vector<std::vector<double>> weights{}; // where each row is the weights for a single neuron
-        std::vector<double> bias; // where each value is a bias for a neuron
-        std::vector<double> output{};
+        std::vector<double> bias{}; // where each value is a bias for a neuron
+        std::vector<std::vector<double>> output{};
 
     public:
         Dense_Layer(int n_input_neurons=0, int n_layer_neurons=0)
-        : weights{generate_random_weights(n_input_neurons, n_layer_neurons)}, bias(n_layer_neurons,0) {
+        : weights{generate_random_weights(n_input_neurons, n_layer_neurons)}, bias(n_layer_neurons, 0.0) {
+    
 
         }
         
@@ -36,11 +37,22 @@ class Dense_Layer {
                 }
             }
 
+           
+
             return w;
         }
 
         void forward(std::vector<std::vector<double>>& inputs) {
-            ;
+           
+
+            std::vector<std::vector<double>> tmp{matrix_product(inputs, weights)};
+
+        
+            output = vector_matrix_addition(tmp, bias);
+
+        }
+        void print() {
+            print_matrix(output);
 
         }
 
@@ -70,7 +82,9 @@ int main() {
 
     };
 
-    print_matrix(weights);
+   Dense_Layer layer{4, 4};
+   layer.forward(inputs);
+   layer.print();
 
     
 
