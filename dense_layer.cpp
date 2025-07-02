@@ -2,6 +2,7 @@
 #include <vector>
 #include <random>
 #include "matrix_functions.h"
+#include <numbers>
 
 class Dense_Layer {
     private:
@@ -75,7 +76,38 @@ std::vector<double> relu(const std::vector<double>& inputs) {
 
     return outputs;
 }
-        
+
+std::vector<double> softmax(const std::vector<double>& inputs) {
+    // TODO add the paremeters back
+
+    std::vector<double> exp{};
+
+    for (auto in: inputs) {
+        exp.push_back(std::pow(std::numbers::e, in));
+    }
+
+
+    // then we want to normalize our results
+    double sum{0};
+    for(auto e: exp) {
+        sum += e;
+    }
+
+
+    // then divide each value
+    std::vector<double> norm_values{};
+    for(auto e: exp) {
+        norm_values.push_back(e / sum);
+    }
+
+    return norm_values;
+
+    
+
+
+
+
+}
 
 
 
@@ -91,7 +123,7 @@ int main() {
    Dense_Layer layer{4, 4};
    layer.forward(inputs);
    
-   // then lets use the relu function on the outputs
+   // then lets use the relu function on the output and printing
     for(auto output: layer.get_output()){
         auto activated_outputs {relu(output)};
         print_vector(activated_outputs);
@@ -100,6 +132,8 @@ int main() {
 
 
    }
+
+   softmax();
  
 
     
