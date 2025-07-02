@@ -56,6 +56,11 @@ class Dense_Layer {
 
         }
 
+        std::vector<std::vector<double>> get_output() {
+            return output;
+        }
+    };
+
 std::vector<double> relu(const std::vector<double>& inputs) {
 
     std::vector<double> outputs{};
@@ -72,7 +77,7 @@ std::vector<double> relu(const std::vector<double>& inputs) {
 }
         
 
-};
+
 
 int main() {
     
@@ -83,16 +88,19 @@ int main() {
         {-1.5, 2.7, 3.3, -0.8}
     };
 
-    std::vector<std::vector<double>> weights{
-        {0.2, 0.8, -0.5, 1.0},
-        {0.5, -0.91, 0.26, -0.5},
-        {-0.26, -0.27, 0.17, 0.87}
-
-    };
-
    Dense_Layer layer{4, 4};
    layer.forward(inputs);
-   layer.print();
+   
+   // then lets use the relu function on the outputs
+    for(auto output: layer.get_output()){
+        auto activated_outputs {relu(output)};
+        print_vector(activated_outputs);
+
+        std::cout << "\n";
+
+
+   }
+ 
 
     
 

@@ -170,7 +170,7 @@ void print_matrix(const std::vector<std::vector<double>>& matrix) {
 
 void print_vector(const std::vector<double>& vector) {
     for(auto item : vector){
-        std::cout << item << "\n";
+        std::cout << item << " ";
     }
 }
 
