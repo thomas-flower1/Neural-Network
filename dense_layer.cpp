@@ -56,13 +56,21 @@ class Dense_Layer {
 
         }
 
+std::vector<double> relu(const std::vector<double>& inputs) {
+
+    std::vector<double> outputs{};
+    for(double input: inputs) {
+        if(input > 0){
+            outputs.push_back(input);
+        } else {
+            outputs.push_back(0);
+        }
+
+    }
+
+    return outputs;
+}
         
-
-
-
-
-
-
 
 };
 
