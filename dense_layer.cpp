@@ -62,52 +62,107 @@ class Dense_Layer {
         }
     };
 
-std::vector<double> relu(const std::vector<double>& inputs) {
+class Relu{
+    private:
+        std::vector<std::vector<double>> output{};
 
-    std::vector<double> outputs{};
-    for(double input: inputs) {
-        if(input > 0){
-            outputs.push_back(input);
-        } else {
-            outputs.push_back(0);
+        std::vector<double> relu_vector(const std::vector<double>& inputs) {
+        
+        // runs the relu function on a vector
+        std::vector<double> outputs{};
+        for(double input: inputs) {
+            if(input > 0){
+                outputs.push_back(input);
+            } else {
+                outputs.push_back(0);
+            }
+
+        }
+        return outputs;
+
+        
+    }
+    
+    public:
+        void forward(const std::vector<std::vector<double>>& matrix) {
+
+            // given a matrix of inputs, apply the relu function and set it to the output
+
+            std::vector<std::vector<double>> out{};
+            for(auto row: matrix) {
+                auto relu_row{relu_vector(row)};
+                out.push_back(relu_row);
+            }
+
+            output = out;
         }
 
-    }
+        auto get_output() {
+            return output;
+        }
 
-    return outputs;
-}
+        void print() {
+            if(output.size() != 0) {
+                print_matrix(output);
+            }
+           
+        }
+        
 
-std::vector<double> softmax(const std::vector<double>& inputs) {
-    // TODO add the paremeters back
+};
 
-    std::vector<double> exp{};
+class Softmax{
+    private:
+        std::vector<std::vector<double>> output{};
 
-    for (auto in: inputs) {
-        exp.push_back(std::pow(std::numbers::e, in));
-    }
-
-
-    // then we want to normalize our results
-    double sum{0};
-    for(auto e: exp) {
-        sum += e;
-    }
+        std::vector<double> softmax(const std::vector<double>& inputs) {
 
 
-    // then divide each value
-    std::vector<double> norm_values{};
-    for(auto e: exp) {
-        norm_values.push_back(e / sum);
-    }
+            // applies the softmax function on a set of inputs
+            std::vector<double> exp{};
 
-    return norm_values;
+            for (auto in: inputs) {
+                exp.push_back(std::pow(std::numbers::e, in));
+            }
 
+
+            // then we want to normalize our results
+            double sum{0};
+            for(auto e: exp) {
+                sum += e;
+            }
+
+
+            // then divide each value
+            std::vector<double> norm_values{};
+            for(auto e: exp) {
+                norm_values.push_back(e / sum);
+            }
+
+            return norm_values;
+
+        }
     
+        public:
+            void forward(const std::vector<std::vector<double>>& matrix) {
+
+                std::vector<std::vector<double>> out{};
+
+                for(auto row: matrix) {
+                    auto softmax_row{softmax(row)};
+                    out.push_back(softmax_row);
+                }
+
+                output = out;
+
+            }
+
+            void print() {
+                print_matrix(output);
+            }
 
 
-
-
-}
+};
 
 
 
@@ -120,20 +175,29 @@ int main() {
         {-1.5, 2.7, 3.3, -0.8}
     };
 
-   Dense_Layer layer{4, 4};
-   layer.forward(inputs);
+    Dense_Layer layer{4, 4};
+    layer.forward(inputs);
    
-   // then lets use the relu function on the output and printing
-    for(auto output: layer.get_output()){
-        auto activated_outputs {relu(output)};
-        print_vector(activated_outputs);
+    std::cout << "The output of the dense layer with no activation function is: " << "\n";
+    layer.print(); // printing the results
+   
+    // now we have an output from the dense layer (with no bias and random weights)
+    // lets now pass it through the relu funcion
+    Relu relu{};
+    relu.forward(layer.get_output()); // makes it so either 0 or a positive number
 
-        std::cout << "\n";
+    std::cout << "\n" << "The output with the reu activation function" << "\n";
+    relu.print();
 
+     // now lets forward the dense layer output
+    Softmax softmax{};
+    softmax.forward(layer.get_output());
 
-   }
+    std::cout << "\n" << "Output with the softmax activation function" << "\n";
+    softmax.print();
+   
 
-   softmax();
+  
  
 
     
