@@ -1,8 +1,10 @@
 #include <iostream>
 #include <vector>
 #include <random>
-#include "matrix_functions.h"
 #include <numbers>
+#include "matrix_functions.h"
+#include "get_data.h"
+
 
 class Dense_Layer {
     private:
@@ -13,6 +15,7 @@ class Dense_Layer {
     public:
         Dense_Layer(int n_input_neurons=0, int n_layer_neurons=0)
         : weights{generate_random_weights(n_input_neurons, n_layer_neurons)}, bias(n_layer_neurons, 0.0) {
+           
     
 
         }
@@ -175,27 +178,47 @@ int main() {
         {-1.5, 2.7, 3.3, -0.8}
     };
 
-    Dense_Layer layer{4, 4};
-    layer.forward(inputs);
-   
-    std::cout << "The output of the dense layer with no activation function is: " << "\n";
-    layer.print(); // printing the results
-   
-    // now we have an output from the dense layer (with no bias and random weights)
-    // lets now pass it through the relu funcion
-    Relu relu{};
-    relu.forward(layer.get_output()); // makes it so either 0 or a positive number
 
-    std::cout << "\n" << "The output with the reu activation function" << "\n";
-    relu.print();
+    auto data{get_data("class1.csv")}; // getting the data from the file
 
-     // now lets forward the dense layer output
-    Softmax softmax{};
-    softmax.forward(layer.get_output());
+    // lets create a portion of the data set
+    std::vector<std::vector<double>> sample(data.begin(), data.begin() + 5);
 
-    std::cout << "\n" << "Output with the softmax activation function" << "\n";
-    softmax.print();
+    Dense_Layer dl{2, 3}; // initialize the dense layer
+
+    Relu relu{}; // create an instance of the relu activation function
+    Softmax sm{};
+
+    dl.forward(sample);
+
+    std::cout << "The forwarded data looks like this: " << "\n";
+    dl.print(); // print the output of the forward data
+
+    relu.forward(dl.get_output()); // pass the output of the forwarding into the relu activation function
+
+    std::cout << "\n" << "The data after passing through the relu activation function looks like this: " << "\n";
+    relu.print(); // some of the data has been clipped to 0
+
+    sm.forward(dl.get_output());
+
+    std::cout << "\n" << "The data after passing through the softmax activation function" << "\n";
+    sm.print(); // passing the data through the softmax activation function
+
+
+    
+
+
+
+
+    
+
+    
+
+    
+
+
    
+
 
   
  

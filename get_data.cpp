@@ -4,22 +4,18 @@
 #include <sstream>
 #include "matrix_functions.h"
 
-int main() {
-    // reading from files
 
-    std::string filename{"class1.csv"};
+
+std::vector<std::vector<double>> get_data(const std::string& filename) {
 
     std::fstream file;
     file.open(filename, std::ios::in); // opening in read mode
+    std::vector<std::vector<double>> matrix{}; // initialize an empty vector
 
     if(file.is_open()) {
         // read from the file
         std::string current_line{};
 
-        std::vector<std::vector<double>> matrix{}; // initialize an empty vector
-
-
-        
         // want to turn this into jus a big vector
         while(getline(file, current_line)) {
             // need to split the line
@@ -38,13 +34,13 @@ int main() {
         }
 
         file.close();
-        print_matrix(matrix);
-        std::cout << matrix[0][0];
+        
+
 
     }
 
+    return matrix; // this is ok
 
 
-    return 0;
-    
+
 }
