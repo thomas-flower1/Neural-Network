@@ -172,6 +172,7 @@ void print_vector(const std::vector<double>& vector) {
     for(auto item : vector){
         std::cout << item << " ";
     }
+    std::cout << "\n";
 }
 
 

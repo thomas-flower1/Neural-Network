@@ -167,6 +167,35 @@ class Softmax{
 
 };
 
+std::vector<double> prediction() {
+    // todo add an input parameter
+
+    std::vector<std::vector<double>> sample_data{
+        {0.7, 0.1, 0.2,},
+        {0.1, 0.5, 0.4},
+        {0.02, 0.9, 0.08}
+    };
+
+    std::vector<double> prediction{};
+
+    // iterate over the data
+    for(auto row: sample_data) {
+        double current_highest{0};
+        for(auto data: row) {
+            if(data > current_highest) {
+                current_highest = data;
+            }
+
+        }
+        prediction.push_back(current_highest);
+    }
+
+    return prediction; // ok, uses move semantics
+
+
+
+}
+
 
 
 int main() {
@@ -179,51 +208,33 @@ int main() {
     };
 
 
-    auto data{get_data("class1.csv")}; // getting the data from the file
+    // auto data{get_data("class1.csv")}; // getting the data from the file
 
-    // lets create a portion of the data set
-    std::vector<std::vector<double>> sample(data.begin(), data.begin() + 5);
+    // // lets create a portion of the data set
+    // std::vector<std::vector<double>> sample(data.begin(), data.begin() + 5);
 
-    Dense_Layer dl{2, 3}; // initialize the dense layer
+    // Dense_Layer dl{2, 3}; // initialize the dense layer
 
-    Relu relu{}; // create an instance of the relu activation function
-    Softmax sm{};
+    // Relu relu{}; // create an instance of the relu activation function
+    // Softmax sm{};
 
-    dl.forward(sample);
+    // dl.forward(sample);
 
-    std::cout << "The forwarded data looks like this: " << "\n";
-    dl.print(); // print the output of the forward data
+    // std::cout << "The forwarded data looks like this: " << "\n";
+    // dl.print(); // print the output of the forward data
 
-    relu.forward(dl.get_output()); // pass the output of the forwarding into the relu activation function
+    // relu.forward(dl.get_output()); // pass the output of the forwarding into the relu activation function
 
-    std::cout << "\n" << "The data after passing through the relu activation function looks like this: " << "\n";
-    relu.print(); // some of the data has been clipped to 0
+    // std::cout << "\n" << "The data after passing through the relu activation function looks like this: " << "\n";
+    // relu.print(); // some of the data has been clipped to 0
 
-    sm.forward(dl.get_output());
+    // sm.forward(dl.get_output());
 
-    std::cout << "\n" << "The data after passing through the softmax activation function" << "\n";
-    sm.print(); // passing the data through the softmax activation function
-
-
-    
+    // std::cout << "\n" << "The data after passing through the softmax activation function" << "\n";
+    // sm.print(); // passing the data through the softmax activation function
 
 
-
-
-    
-
-    
-
-    
-
-
-   
-
-
-  
- 
-
-    
+    print_vector(prediction());
 
     
 
