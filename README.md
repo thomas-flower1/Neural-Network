@@ -1,4 +1,9 @@
 # Creating a neural network from scratch using c++
 
-This project will not use any other libraries apart from the standard library. Each function will be implemented by hand.
-Not only will this project make me proffecient in c++ but will give me a deep insight into how neural networks work
+Summer project to learn c++ and also understand neural networks from the ground up.
+<br>
+
+In this project I will build a neural network from scratch using only the standard c++ library. The problem I have chosen to tackle is a common classification task in which my model will give predictions on numbers based on images.
+
+<br>
+Note: This project uses c++20 if you want to compile anything yourself
