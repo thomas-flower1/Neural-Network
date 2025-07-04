@@ -2,6 +2,7 @@
 #include <vector>
 #include <random>
 #include <numbers>
+#include <typeinfo>
 #include "matrix_functions.h"
 #include "get_data.h"
 
@@ -167,34 +168,107 @@ class Softmax{
 
 };
 
-std::vector<double> prediction() {
-    // todo add an input parameter
 
-    std::vector<std::vector<double>> sample_data{
-        {0.7, 0.1, 0.2,},
-        {0.1, 0.5, 0.4},
-        {0.02, 0.9, 0.08}
-    };
+class Loss {
+    private:
 
-    std::vector<double> prediction{};
-
-    // iterate over the data
-    for(auto row: sample_data) {
-        double current_highest{0};
-        for(auto data: row) {
-            if(data > current_highest) {
-                current_highest = data;
+        void clip(std::vector<std::vector<double>>& samples){
+            // given a reference of the data, changes it inplace using a reference
+            double min{std::pow(10, -7)};
+            for(auto row: samples){
+                for(auto val: row) {
+                    if(val <= 0) {
+                        val = min;
+                    } else if(val > 1) {
+                        val = 1 - min;
+                    }
+                }
             }
 
         }
-        prediction.push_back(current_highest);
+
+        std::vector<double> get_confidences(const std::vector<std::vector<double>>& output, const std::vector<int>& target) {
+
+            // iterate over each row, use the target index as index into the row, add to a vector
+            std::vector<double> confidences{};
+
+            int target_index{0};
+            for(auto row: output) {
+                confidences.push_back(row[target[target_index]]);
+                target_index++;
+            }
+
+            return confidences;
+        }
+
+
+
+
+    public:
+
+        std::vector<double> forward(std::vector<std::vector<double>>& output, const std::vector<int>& target)  {
+            // first need to clip the data - prevents any division by 0 errors
+            clip(output);
+
+            // we will be way of tracking the target
+
+            /*
+
+            Our data: the confidence of our data
+            [0.5, 0.2, 0.3] output 1
+            [0,9, 0,05, 0,05] output 2
+            [0.8, 0.15, 0.05] output 3
+
+            0 = cat
+            1 = dog
+            2 = bear
+
+            targets
+            [0, 1, 1] i.e for the first its cat, for the second its a dog, for the third its also a dog (the correct answers)
+
+            we want to extract the confidence of the correct target, we can use the indexs of the target
+
+            for cat in the first data set we have 50% confidence
+            for dog we have 90% confidence in the second set
+            and in the theid we only have 15% confidence that it is a dog - our model didn't work so well
+
+            
+            */
+
+            auto confidences{get_confidences(output, target)}; // returns the corresponding confidence to the target
+
+            // getting the log of each value
+            for(auto& value: confidences) { // note for self, need the reference when iterating over a vector to update
+                value = -(std::log(value));
+               
+            }
+
+            return confidences;
     }
 
-    return prediction; // ok, uses move semantics
+    double loss(std::vector<std::vector<double>>& output, const std::vector<int>& target) {
+        auto predictions{forward(output, target)};
+
+
+        // calculate the loss on our predictions, just find the mean
+        int size{static_cast<int>(predictions.size())};
+
+        double sum{0};
+        for(auto num: predictions) {
+            sum += num;
+        }
+
+        return sum / size;
 
 
 
-}
+
+    }
+
+   
+        
+};
+
 
 
 
@@ -234,9 +308,22 @@ int main() {
     // sm.print(); // passing the data through the softmax activation function
 
 
-    print_vector(prediction());
+    // print_vector(prediction());
 
-    
+    Loss loss{};    
+
+    std::vector<std::vector<double>> softmax_output{
+        {0.7, 0.1, 0.2},
+        {0.1, 0.5, 0.4},
+        {0.02, 0.9, 0.08},
+    };
+
+    std::vector<int> targets{0, 1, 1};
+    auto l {loss.loss(softmax_output, targets)};
+    std::cout << "Calculated loss: " << l << "\n";
+
+
+
 
     
 
