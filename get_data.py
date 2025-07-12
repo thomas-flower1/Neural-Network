@@ -2,7 +2,16 @@ from PIL import Image
 import numpy as np
 
 
-def print_image(filepath) -> None:
+def print_image(filepath: str) -> None:
+    '''
+    Takes the relative path of a 28x28 png image of prints it to the console
+
+    Args:
+    filepath: The relative path for the image png, example would be: 'archive\dataset/0/0/0.png'
+
+    Returns:
+    n/a
+    '''
 
     img = Image.open(filepath)
     arr = np.array(img)
@@ -13,28 +22,38 @@ def print_image(filepath) -> None:
             if col != 0:
                 print(1,' ', end='')
             else:
-                print(col, ' ', end='')
+                print(' ', ' ', end='')
         print()
 
 
 
-def write_data(filename, folder_path) -> None:
+def write_data(filename: str, folder_path: str, number_of_samples: int=10000) -> None:
     '''
+    Turns image pngs into a vector of 0s and 1s from the alpha channel,
+    It then writes these values into the specified file
+
     Args:
     Filename: the name of the file to write to
-    folder_path: the relvative path to the folder with the training pngs
+    folder_path: the relvative path to the folder with the training pngs, Example: archive\dataset/0/0/
+    number_of_sample: the number of samples in the training set folder
+
+    Note this assums the filenames in the folder are like: 0.png, 100.png etc
+
+
+    Returns:
+    n/a
     
     '''
-    number_of_samples = 8000 # for each number we will have 8000 training examples, the rest will be used to check the network
+  
     with open(filename, 'a') as af:
         for i in range(number_of_samples):
             image_file = f'{folder_path}{i}.png'
 
             img = Image.open(image_file)
-            arr = np.array(img)
+            matrix = np.array(img)
 
 
-            alpha = arr[:, :, 3] # getting the alpha channel
+            alpha = matrix[:, :, 3] # getting the alpha channel
             for row in alpha:
                 for col in row:
                     if col != 0:
@@ -44,8 +63,11 @@ def write_data(filename, folder_path) -> None:
             af.write('\n')
             
 
-def read_data(filename, row_num) -> np.array:
+def read_data(filename: str, row_num: int = 1) -> np.array:
     '''
+    Read the vector at a certain index from the specified file and turns to an int numpy array
+
+
     Args
     Filename: The name of the file containing the data
     row_num: The index of the row to read
@@ -57,42 +79,48 @@ def read_data(filename, row_num) -> np.array:
     with open(filename) as rf:
         for index, line in enumerate(rf):
             if index == row_num:
-
                 return np.array([int(char) for char in line[:-1]])
 
 
-def print_data(arr: np.array) -> None:
-    dimension = 28
+def print_array_image(arr: np.array) -> None:
+    '''
+    Given the vector containting the image, prints out the image again as a matrix to the console
 
-    arr = arr[:-1]
+    Args:
+    arr: A vector, availble from the data files, that contains the data of the image
+
+    Returns
+    n/a
+
+
+    
+    '''
+    dimension = 28
+    arr = arr[:-1] # get rid of the newline char
 
     matrix = []
-    row = []
+    row = ' '
     for i, num in enumerate(arr):
-        row.append(int(num))
+        if num != 1:
+            row = row + ' '
+        else:
+            row = row + '1'
         if i % dimension == 0:
             matrix.append(row)
-            row = []
+            row = ''
             
             
-    
     for row in matrix:
-        print(row)
+        print(str(row))
 
 
         
 
 if __name__ == '__main__':
-
-    # each row is 28 x 28 string representation of the data (784)
-    data_filename = 'nine_data.txt'
-    folder_path = 'archive/dataset/9/9/'
-
-    write_data(data_filename, folder_path)
+    file = 'seven_data.txt'
+    arr = read_data(file)
+    print_array_image(arr)
     
-    arr = read_data(data_filename, 6784)
-    print_data(arr)
-
     
 
 
