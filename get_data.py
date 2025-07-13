@@ -7,7 +7,7 @@ def print_image(filepath: str) -> None:
     Takes the relative path of a 28x28 png image of prints it to the console
 
     Args:
-    filepath: The relative path for the image png, example would be: 'archive\dataset/0/0/0.png'
+    filepath: The relative path for the image png, example would be: 'archive/dataset/0/0/0.png'
 
     Returns:
     n/a
@@ -34,7 +34,7 @@ def write_data(filename: str, folder_path: str, number_of_samples: int=10000) ->
 
     Args:
     Filename: the name of the file to write to
-    folder_path: the relvative path to the folder with the training pngs, Example: archive\dataset/0/0/
+    folder_path: the relvative path to the folder with the training pngs, Example: archive/dataset/0/0/
     number_of_sample: the number of samples in the training set folder
 
     Note this assums the filenames in the folder are like: 0.png, 100.png etc
@@ -63,9 +63,9 @@ def write_data(filename: str, folder_path: str, number_of_samples: int=10000) ->
             af.write('\n')
             
 
-def read_data(filename: str, row_num: int = 1) -> np.array:
+def read_data(filename: str) -> np.array:
     '''
-    Read the vector at a certain index from the specified file and turns to an int numpy array
+    Returns a matrix where each row is a sample ftom thr dataset
 
 
     Args
@@ -76,10 +76,13 @@ def read_data(filename: str, row_num: int = 1) -> np.array:
     A numpy representation a single entry of the data, a 1D vector
     '''
     
+    matrix = []
+    # TODO update
     with open(filename) as rf:
-        for index, line in enumerate(rf):
-            if index == row_num:
-                return np.array([int(char) for char in line[:-1]])
+        for line in rf:
+            matrix.append(np.array([int(char) for char in line[:-1]]))
+    
+    return np.array(matrix)
 
 
 def print_array_image(arr: np.array) -> None:
@@ -117,10 +120,12 @@ def print_array_image(arr: np.array) -> None:
         
 
 if __name__ == '__main__':
-    file = 'seven_data.txt'
-    arr = read_data(file)
-    print_array_image(arr)
-    
-    
+    write_file = 'one_data.txt'
+    folder_path = 'archive/dataset/9/9/'
+    write_data(write_file, folder_path)
+
+    arr = read_data(write_file)
+    print_array_image(arr[5000])
+
 
 
