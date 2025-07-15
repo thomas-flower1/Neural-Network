@@ -25,6 +25,14 @@ The best video I think on the topic since it goes through and example with Softm
 ### Credits
 - Dataset used: [Kraggle](https://www.kaggle.com/datasets/jcprogjava/handwritten-digits-dataset-not-in-mnist)
 
-### Usage
-The network is trained with 80,000 samples. The data is loaded into the code for you to try!
+
+### Demo
+(https://github.com/user-attachments/assets/e6c5cc10-0c30-4cfa-952c-0a352463013e)
+
+### Notes:
+The accuracy of the model with respect to the 80,000 training examples was >90%. It had a 2 dense layers of 128 and 10 neurons respectively.
+Due to the nature of the hadnwritten example, it had a  ~75% accuray with its 10,000 samples. This is mainly due to the inconsitelty of my hand drawn dataset. It has dense layers of 256 and 10 neurons.
+
+To improve this model it would be fun to implement a CNN in the future.
+
 
