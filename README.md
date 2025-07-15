@@ -27,7 +27,8 @@ The best video I think on the topic since it goes through and example with Softm
 
 
 ### Demo
-(https://github.com/user-attachments/assets/e6c5cc10-0c30-4cfa-952c-0a352463013e)
+
+![Untitled video - Made with Clipchamp](https://github.com/user-attachments/assets/31e4cf84-dc54-4b8c-b9fb-9c97cef26d6c)
 
 ### Notes:
 The accuracy of the model with respect to the 80,000 training examples was >90%. It had a 2 dense layers of 128 and 10 neurons respectively.
