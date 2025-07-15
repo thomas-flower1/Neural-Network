@@ -1,6 +1,6 @@
 import numpy as np
 from random import uniform, shuffle
-from get_data import read_data, print_data
+from get_data import read_data
 
 class Neuron:
     def __init__(self, n_inputs):
@@ -97,17 +97,32 @@ class Layer:
         self.d_inputs = []
         self.d_b =[]
 
-        
+    def save(self, filename):
+        '''Saves the weights and biases of the nn' by saving to a file'''
 
-
-
-            
-
-
-        
-
+        with open(filename, 'a') as af:
+            for neuron in self.layer:
+                s = ''
+                for num in neuron.w:
+                    s = s + str(num) + ','
+                af.write(s)
+                af.write('\n')
     
-        
+    def load(self, filename):
+        with open(filename) as rf:
+            for i, line in enumerate(rf):
+             
+
+                str_arr = line.split(',')[:-1]
+                weights = np.array([float(num) for num in str_arr])
+            
+                
+                self.layer[i].w = weights.flatten()
+
+
+
+
+
 
 
 class Relu:
@@ -149,10 +164,6 @@ class Softmax:
         self.output = np.array(vector)
         return self.output
         
-
-        
-      
-    
 
     # dont need a backwards function since handles in the loss function
     
@@ -218,40 +229,34 @@ class Data:
 
 
 
-
 if __name__ == '__main__':
 
-    filenames = ['zero_data.txt', 'one_data.txt', 'two_data.txt', 'three_data.txt', 'four_data.txt', 'five_data.txt', 'six_data.txt', 'seven_data.txt', 'eight_data.txt',
-                 'nine_data.txt']
-    
+    # filenames = ['dataset1/zero_data.txt', 'dataset1/one_data.txt', 'dataset1/two_data.txt', 'dataset1/three_data.txt', 'dataset1/four_data.txt', 'dataset1/five_data.txt', 'dataset1/six_data.txt', 'dataset1/seven_data.txt', 'dataset1/eight_data.txt',
+    #            'dataset1/nine_data.txt']
+
+
+    # filenames = ['dataset2/zero.txt', 'dataset2/one.txt', 'dataset2/two.txt', 'dataset2/three.txt', 'dataset2/four.txt', 'dataset2/five.txt', 'dataset2/six.txt', 'dataset2/seven.txt', 'dataset2/eight.txt', 'dataset2/nine.txt']
+
+    filenames = ['dataset2test/test0.txt', 'dataset2test/test1.txt', 'dataset2test/test2.txt', 'dataset2test/test3.txt', 'dataset2test/test4.txt', 'dataset2test/test5.txt', 'dataset2test/test6.txt', 'dataset2test/test7.txt', 'dataset2test/test8.txt', 'dataset2test/test9.txt']
+
+    # loading inputs with their target
     inputs = []
-
-    for j in range(len(filenames)):
+    for i in range(len(filenames)):
         target = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        target[j] = 1
-        for i in range(1000):
-            arr = read_data(filenames[j], i)
-            data = Data(j, arr, target)
+        target[i] = 1
+
+        matrix = read_data(filenames[i])
+        for arr in matrix:
+            data = Data(i, arr, target)
             inputs.append(data)
-    
-    check = []
-    for j in range(len(filenames)):
-        target = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        target[j] = 1
-        for i in range(1000):
-            arr = read_data(filenames[j], i + 1000)
-            data = Data(j, arr, target)
-            check.append(data)
-     
-    
-    # TRAINING !!!!
 
-  
-    input_size = 784
+    input_size = 784 # size of how long a single training example is 
     shuffle(inputs)
 
-    layer1 = Layer(16, input_size)
-    layer2 = Layer(10, 16)
+    # TRAINING !!!
+
+    layer1 = Layer(256, input_size)
+    layer2 = Layer(10, 256)
 
     # activation functions
     relu = Relu()
@@ -259,59 +264,83 @@ if __name__ == '__main__':
 
     loss = Loss()
        
-
-    for i in range(5):
-        for input in inputs:
-            data = input.data
-            target = input.target
+    epoch = 10
+    # for _ in range(epoch): # train on the same data 5 times (epoch)
+    #     for input in inputs:
+    #         data = input.data
+    #         target = input.target
 
         
+    #         # forward
+    #         layer1.forward(data)
+    #         relu.forward_layer(layer1.output)
 
-            layer1.forward(data)
-            relu.forward_layer(layer1.output)
-
-            layer2.forward(relu.output)
-            softmax.forward(layer2.output)
+    #         layer2.forward(relu.output)
+    #         softmax.forward(layer2.output)
 
 
-
-            loss.forward_layer(softmax.output, target)
-            # print("Loss", loss.loss)
+    #         # loss
+    #         loss.forward_layer(softmax.output, target)
+    #         # print("Loss", loss.loss)
             
 
-            #backwards
-            loss.backwards_layer(softmax.output, target)
-            layer2.backwards(loss.gradient)
+    #         #backwards
+    #         loss.backwards_layer(softmax.output, target)
+    #         layer2.backwards(loss.gradient)
 
-            relu.backward_layer(np.sum(layer2.d_inputs, axis=0)) # would be better to do the average
-            layer1.backwards(relu.gradient)
+    #         relu.backward_layer(np.sum(layer2.d_inputs, axis=0)) # would be better to do the average
+    #         layer1.backwards(relu.gradient)
 
 
-            #update
-            layer1.update()
-            layer2.update()
+    #         #update
+    #         layer1.update()
+    #         layer2.update()
     
+    # Saving weights
+    # savefile1 = 'layer1weights.csv'
+    # savefile2 = 'layer2weights.csv'
+
+    savefile1 = 'selfweights1.csv'
+    savefile2 = 'selfweights2.csv'
+
+    # layer1.save(savefile1)
+    # layer2.save(savefile2)
+
+
+    # loding data
+    layer1.load(savefile1)
+    layer2.load(savefile2)
+
+
     # lets check our neural network
-    shuffle(check)
+    correct = 0
+    number_of_iterations = len(inputs)
 
-    for i in range(1):
+   
+    for input in inputs:
 
-        test_data = check[i]
+        test_data = input
         data = test_data.data
         target = test_data.target
 
+        # forward
         layer1.forward(data)
         relu.forward_layer(layer1.output)
         layer2.forward(relu.output)
         softmax.forward(layer2.output)
-
+        
+        # prediction
         predicted = np.argmax(softmax.output)
         actual = np.argmax(target)
         
-        print(f'Prediction: {predicted}')
-        print(f'Actual: {actual}')
+        # print(f'Prediction: {predicted}')
+        # print(f'Actual: {actual}')
 
-        print_data(data)
+        if actual == predicted:
+            correct += 1
+
+        
+    print(f'Accuracy: {correct / number_of_iterations * 100}')
 
 
 

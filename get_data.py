@@ -120,12 +120,17 @@ def print_array_image(arr: np.array) -> None:
         
 
 if __name__ == '__main__':
-    write_file = 'one_data.txt'
-    folder_path = 'archive/dataset/9/9/'
-    write_data(write_file, folder_path)
+    # write_file = 'one_data.txt'
+    # folder_path = 'archive/dataset/9/9/'
+    # write_data(write_file, folder_path)
 
-    arr = read_data(write_file)
-    print_array_image(arr[5000])
+    # arr = read_data(write_file)
+    # print_array_image(arr[5000])
+
+    matrix = read_data('nine.txt')[200:220]
+    
+    for row in matrix:
+        print_array_image(row)
 
 
 
