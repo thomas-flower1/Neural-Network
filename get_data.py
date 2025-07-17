@@ -1,5 +1,6 @@
 from PIL import Image
 import numpy as np
+import os
 
 
 def print_image(filepath: str) -> None:
@@ -27,7 +28,7 @@ def print_image(filepath: str) -> None:
 
 
 
-def write_data(filename: str, folder_path: str, number_of_samples: int=10000) -> None:
+def write_data(filename: str, folder: str) -> None:
     '''
     Turns image pngs into a vector of 0s and 1s from the alpha channel,
     It then writes these values into the specified file
@@ -37,21 +38,15 @@ def write_data(filename: str, folder_path: str, number_of_samples: int=10000) ->
     folder_path: the relvative path to the folder with the training pngs, Example: archive/dataset/0/0/
     number_of_sample: the number of samples in the training set folder
 
-    Note this assums the filenames in the folder are like: 0.png, 100.png etc
-
-
     Returns:
     n/a
     
     '''
-  
+    files = [f'{folder}/{file.name}' for file in os.scandir(folder) if file.is_file()]
     with open(filename, 'a') as af:
-        for i in range(number_of_samples):
-            image_file = f'{folder_path}{i}.png'
-
-            img = Image.open(image_file)
+        for file in files:
+            img = Image.open(file)
             matrix = np.array(img)
-
 
             alpha = matrix[:, :, 3] # getting the alpha channel
             for row in alpha:
@@ -65,19 +60,18 @@ def write_data(filename: str, folder_path: str, number_of_samples: int=10000) ->
 
 def read_data(filename: str) -> np.array:
     '''
-    Returns a matrix where each row is a sample ftom thr dataset
+    Returns a matrix where each row is a sample from the dataset
 
 
     Args
     Filename: The name of the file containing the data
-    row_num: The index of the row to read
+  
 
     Returns:
-    A numpy representation a single entry of the data, a 1D vector
+    A matrix of where each row is a piece of data 
     '''
     
     matrix = []
-    # TODO update
     with open(filename) as rf:
         for line in rf:
             matrix.append(np.array([int(char) for char in line[:-1]]))
@@ -94,7 +88,6 @@ def print_array_image(arr: np.array) -> None:
 
     Returns
     n/a
-
 
     
     '''
@@ -115,22 +108,104 @@ def print_array_image(arr: np.array) -> None:
             
     for row in matrix:
         print(str(row))
+    
+def arr_to_matrix(arr):
+    matrix = arr.reshape(28, 28)
+    return matrix
+            
 
 
+def shift_left(arr, shift_amount):
+    '''Takes in an array of 0s and 1s and shifts the images by a certan amount of pixels to the right'''
+
+    matrix = arr_to_matrix(arr)
+    solution = []
+    for row in matrix:
+        r = []
+        for col in row:
+            r.append(col)
         
+        for _ in range(shift_amount):
+            r.append(0)
+            r.pop(0)
+        
+        solution.append(r)
+    
+    solution = np.array(solution).flatten()
+    
+    return solution
+
+def shift_right(arr, shift_amount):
+    '''Takes in an array of 0s and 1s and shifts the images by a certan amount of pixels to the right'''
+
+    matrix = arr_to_matrix(arr)
+    solution = []
+    for row in matrix:
+        r = []
+        for col in row:
+            r.append(col)
+        
+        for _ in range(shift_amount):
+            r.insert(0, 0)
+            r.pop()
+        
+        solution.append(r)
+    
+    solution = np.array(solution).flatten()
+    return solution
+
+def shift_up(arr, shift_amount):
+    matrix = list(arr_to_matrix(arr))
+    for _ in range(shift_amount):
+        matrix.pop(0)
+        matrix.append([0 for _ in range(len(matrix[0]))])
+    
+    return np.array(matrix).flatten()
+
+
+def shift_down(arr, shift_amount):
+    matrix = list(arr_to_matrix(arr))
+    for _ in range(shift_amount):
+        matrix.pop(-1)
+        matrix.insert(0, ([0 for _ in range(len(matrix[0]))]))
+    
+    return np.array(matrix).flatten()
+
 
 if __name__ == '__main__':
-    # write_file = 'one_data.txt'
-    # folder_path = 'archive/dataset/9/9/'
-    # write_data(write_file, folder_path)
+    '''
+    When given a png and want to convert to an array for the file
+    Used write_data()
 
-    # arr = read_data(write_file)
-    # print_array_image(arr[5000])
+    If want to augment the date
+    - read the data into a matrix read_data()
+    - iterate over the data and call corresponding shift function
 
-    matrix = read_data('nine.txt')[200:220]
+    '''
+
+    pass
+
+
+    # pathname = 'UI samples data/zero_data.txt'
+    # copy = 'UI samples data/zero_data copy.txt'
+
+    # # #Augmenting my data
+    # all_data = read_data(copy)
+    # with open(pathname, 'a') as af:
+    #     for data in all_data:
+    #         right = shift_up(data, 3) # this is a numbpy array
+    #         left = shift_down(data, 3)
+    #         for number in right:
+    #             af.write(str(number))
+    #         af.write('\n')
+    #         for number in left:
+    #             af.write(str(number))
+    #         af.write('\n')
     
-    for row in matrix:
-        print_array_image(row)
-
-
-
+    
+    
+    
+            
+        
+   
+  

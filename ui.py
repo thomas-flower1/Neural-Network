@@ -11,12 +11,11 @@ window.geometry(window_size)
 window.title(title)
 window.configure(bg='white')
 
-# TODO neat font
-font = ('Arial', 32)
+title_font = ('Arial', 32)
 text_font = ('Arial', 16)
 
-# heading
-heading = tk.Label(window, text=title, bg='white', font=font, pady=10)
+# title
+heading = tk.Label(window, text=title, bg='white', font=title_font, pady=10)
 heading.pack()
 
 
@@ -25,7 +24,7 @@ prediction_text.set('Prediction: ')
 prediction = tk.Label(window, textvariable=prediction_text, bg='white', font=text_font)
 prediction.place(x = 500, y = 100)
 
-
+# empty matrix keeping track of the pixels coloured
 matrix_size = 28
 matrix = [[0 for _ in range(matrix_size)] for _ in range(matrix_size)]
 
@@ -47,8 +46,7 @@ weights_save_2 = 'weights2.csv'
 bias_save_1 = 'bias1.csv'
 bias_save_2 = 'bias2.csv'
 
-
-
+# load weights
 layer1.load(weights_save_1, bias_save_1)
 layer2.load(weights_save_2, bias_save_2)
 
@@ -57,36 +55,36 @@ def draw_border():
 
     pixel_size = 16
     padding_width = 3
-    line_width = 22
-    line_height = 22
+    line_dimension = 22
+  
 
     start_x = pixel_size * padding_width
     start_y = pixel_size * padding_width
 
     # drawing the top line
-    for _ in range(line_width):
+    for _ in range(line_dimension):
         canvas.create_rectangle(start_x, start_y, start_x + pixel_size, start_y + pixel_size, fill='red', outline='')
-        start_x += 16
+        start_x += pixel_size
     
     start_y = pixel_size * 24 # 24 is the y of the bottom left
     start_x = pixel_size * padding_width
 
     # drawing the bottom line
-    for _ in range(line_width):
+    for _ in range(line_dimension):
         canvas.create_rectangle(start_x, start_y, start_x + 16, start_y + 16, fill='red', outline='')
-        start_x += 16
+        start_x += pixel_size
     
     # draw the right line
     start_x = pixel_size * padding_width
     start_y = pixel_size * padding_width
-    for _ in range(line_width):
+    for _ in range(line_dimension):
         canvas.create_rectangle(start_x, start_y, start_x + 16, start_y + 16, fill='red', outline='')
         start_y += pixel_size
     
     # draw the left line
     start_x = pixel_size * 24
     start_y = pixel_size * padding_width
-    for _ in range(line_width):
+    for _ in range(line_dimension):
         canvas.create_rectangle(start_x, start_y, start_x + 16, start_y + 16, fill='red', outline='')
         start_y += pixel_size
 
@@ -115,12 +113,11 @@ def draw_pixel(event):
         
             canvas.create_rectangle(top_right_x, top_right_y, bottom_left_x, bottom_left_y, fill='black')
     
-    nn()
+    nn() # call the neural net each time we draw a pixel
 
 
 def nn(event=None):
     
-
     # need to turn matrix into a row
     input  = [int(col) for row in matrix for col in row]
     input = np.array([input]).flatten()
@@ -138,24 +135,20 @@ def nn(event=None):
 
     out = np.argmax(softmax.output)
 
+    # prediction text from the nn
     t = f'Prediction: {out}'
+    prediction_text.set(t)
 
+    # setting all the predictions from the nn
     s = [round(float(num), 2) * 100 for num in softmax.output]
-
     for i, text in enumerate(accuracy_text):
         text.set(f'{i}: {s[i]:.2f}%')
    
-    prediction_text.set(t)
-
+   
     # pathname = 'test9.txt'
     # add_training_example(pathname, input)
     # clear_canvas() # used for imputting the data set
 
-
-
-   
-
-   
 
 
 
@@ -172,8 +165,8 @@ def clear_canvas():
 
 
 def add_training_example(filename, arr):
-    with open(filename, 'a') as af:
 
+    with open(filename, 'a') as af:
         arr = [str(num) for num in arr] # convert matrix into 1d array
        
         s = ''.join(arr)
@@ -197,17 +190,19 @@ draw_border()
 
 
 
-# TODO send button
+# send button
 send_button = tk.Button(window, text='Send', font=('Arial', 18), command=nn, relief='flat', bg='#2E8B57', fg='white', padx=5, pady=5)
 send_button.place(x = 500 + 5, y = 140)
 
+# Press the enter key, sedn with the enter key too
+window.bind('<Return>', nn)
 
-# TODO reset button
+
+# reset button
 reset_button = tk.Button(window, text='Clear', command=clear_canvas, font=('Arial', 18), bg='#2E8B57', relief='flat', fg='white', activebackground='#2E8B57', activeforeground='white', padx=5, pady=5)
 reset_button.place(x = 500 + 5, y = 480)
 
-# Press the enter key
-window.bind('<Return>', nn)
+
 
 # Number labels
 zero_text = tk.StringVar()
@@ -261,8 +256,6 @@ nine = tk.Label(window, textvariable=nine_text, font=('Arial', 16), bg='white')
 nine.place(x= 650, y = 370)
 
 accuracy_text = [zero_text, one_text, two_text, three_text, four_text, five_text, six_text, seven_text, eight_text, nine_text]
-
-
 
 
 window.mainloop()

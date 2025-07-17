@@ -1,6 +1,7 @@
 import numpy as np
 from random import uniform, shuffle
 from get_data import read_data
+import os
 
 class Neuron:
     def __init__(self, n_inputs):
@@ -231,7 +232,6 @@ class Loss:
 
     
 
-
 class Data:
     def __init__(self, value, data, target):
         self.value = value
@@ -242,20 +242,13 @@ class Data:
         return f'{self.value}, {self.target}'
 
 
+def get_inputs(filenames: list) -> list:
+    '''
+    Takes in the an array of the filenames, in order from 0 - 9
 
 
-
-if __name__ == '__main__':
-
-
-    # filenames = ['dataset2/zero.txt', 'dataset2/one.txt', 'dataset2/two.txt', 'dataset2/three.txt', 'dataset2/four.txt', 'dataset2/five.txt', 'dataset2/six.txt', 'dataset2/seven.txt', 'dataset2/eight.txt', 'dataset2/nine.txt']
-    # filenames = ['dataset2test/test0.txt', 'dataset2test/test1.txt', 'dataset2test/test2.txt', 'dataset2test/test3.txt', 'dataset2test/test4.txt', 'dataset2test/test5.txt', 'dataset2test/test6.txt', 'dataset2test/test7.txt', 'dataset2test/test8.txt', 'dataset2test/test9.txt']
-    # filenames = ['dataset3/zero.txt', 'dataset3/one.txt', 'dataset3/two.txt', 'dataset3/three.txt', 'dataset3/four.txt', 'dataset3/five.txt', 'dataset3/six.txt', 'dataset3/seven.txt', 'dataset3/eight.txt', 'dataset3/nine.txt']
-
-    filenames = ['zero.txt', 'one.txt', 'three.txt', 'four.txt', 'five.txt', 'six.txt', 'seven.txt', 'eight.txt', 'nine.txt']
-
-
-    # loading inputs with their target
+    
+    '''
     inputs = []
     for i in range(len(filenames)):
         target = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -266,16 +259,31 @@ if __name__ == '__main__':
             data = Data(i, arr, target)
             inputs.append(data)
 
-    input_size = 784 # size of how long a single training example is 
+
     shuffle(inputs)
 
-    # TRAINING !!!
+    return inputs
 
+
+
+if __name__ == '__main__':
+
+    input_size = 784 # size of how long a single training example is 
+
+    folder_path = 'Ui samples data'
+    numbers = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
+    filenames = [f'{folder_path}/{number}_data.txt'for number in numbers]
+
+    test_filenames = [f'UI test sample data/test{i}.txt' for i in range(10)]
+
+    test = get_inputs(test_filenames)
+    inputs = get_inputs(filenames)
+  
+  
+    # Creating the neural network
     layer1 = Layer(128, input_size)
     layer2 = Layer(10, 128)
    
-   
-
     # activation functions
     relu = Relu()
     relu2 = Relu()
@@ -283,6 +291,8 @@ if __name__ == '__main__':
 
     loss = Loss()
        
+    
+    # TRAINING !!!
     epoch = 10
     for _ in range(epoch): # train on the same data 5 times (epoch)
         for input in inputs:
@@ -317,13 +327,8 @@ if __name__ == '__main__':
     
     print(loss.loss)
     
-   
-    # weights_save_1 = 'selfweights1.csv'
-    # weights_save_2 = 'selfweights2.csv'
 
-    # bias_save_1 = 'selfbias1.csv'
-    # bias_save_2 = 'selfbias2.csv'
-
+    # names of the files to save and load from
     weights_save_1 = 'weights1.csv'
     weights_save_2 = 'weights2.csv'
 
@@ -331,25 +336,26 @@ if __name__ == '__main__':
     bias_save_2 = 'bias2.csv'
     
 
-
     layer1.save(weights_save_1, bias_save_1)
     layer2.save(weights_save_2, bias_save_2)
    
 
 
     # loding data
-    # layer1.load(weights_save_1, bias_save_1)
-    # layer2.load(weights_save_2, bias_save_2)
+    layer1.load(weights_save_1, bias_save_1)
+    layer2.load(weights_save_2, bias_save_2)
   
 
     # lets check our neural network
     correct = 0
-    number_of_iterations = len(inputs)
+    number_of_iterations = len(test)
 
    
-    for input in inputs:
 
-        test_data = input
+    # testing the network
+    for t in test:
+
+        test_data = t
         data = test_data.data
         target = test_data.target
 
@@ -363,8 +369,7 @@ if __name__ == '__main__':
         predicted = np.argmax(softmax.output)
         actual = np.argmax(target)
         
-        # print(f'Prediction: {predicted}')
-        # print(f'Actual: {actual}')
+       
 
         if actual == predicted:
             correct += 1
