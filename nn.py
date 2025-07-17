@@ -81,7 +81,7 @@ class Layer:
     
 
     def update(self):
-        learning_rate = 0.01
+        learning_rate = 0.001
     
         for neuron in self.layer:
             neuron.w -= learning_rate * neuron.w_grad
@@ -97,19 +97,28 @@ class Layer:
         self.d_inputs = []
         self.d_b =[]
 
-    def save(self, filename):
+    def save(self, weights_filename, bias_filename):
         '''Saves the weights and biases of the nn' by saving to a file'''
 
-        with open(filename, 'a') as af:
+        with open(weights_filename, 'a') as af:
             for neuron in self.layer:
                 s = ''
                 for num in neuron.w:
                     s = s + str(num) + ','
                 af.write(s)
                 af.write('\n')
+        
+        with open(bias_filename, 'a') as af:
+            for neuron in self.layer:
+                b = neuron.b
+                
+                af.write(str(b))
+                af.write('\n')
+        
+        
     
-    def load(self, filename):
-        with open(filename) as rf:
+    def load(self, weight_filename, bias_filename):
+        with open(weight_filename) as rf:
             for i, line in enumerate(rf):
              
 
@@ -118,6 +127,13 @@ class Layer:
             
                 
                 self.layer[i].w = weights.flatten()
+        
+        with open(bias_filename) as rf:
+            for i, line in enumerate(rf):
+                
+                
+                self.layer[i].b = float(line)
+
 
 
 
@@ -231,13 +247,13 @@ class Data:
 
 if __name__ == '__main__':
 
-    # filenames = ['dataset1/zero_data.txt', 'dataset1/one_data.txt', 'dataset1/two_data.txt', 'dataset1/three_data.txt', 'dataset1/four_data.txt', 'dataset1/five_data.txt', 'dataset1/six_data.txt', 'dataset1/seven_data.txt', 'dataset1/eight_data.txt',
-    #            'dataset1/nine_data.txt']
-
 
     # filenames = ['dataset2/zero.txt', 'dataset2/one.txt', 'dataset2/two.txt', 'dataset2/three.txt', 'dataset2/four.txt', 'dataset2/five.txt', 'dataset2/six.txt', 'dataset2/seven.txt', 'dataset2/eight.txt', 'dataset2/nine.txt']
+    # filenames = ['dataset2test/test0.txt', 'dataset2test/test1.txt', 'dataset2test/test2.txt', 'dataset2test/test3.txt', 'dataset2test/test4.txt', 'dataset2test/test5.txt', 'dataset2test/test6.txt', 'dataset2test/test7.txt', 'dataset2test/test8.txt', 'dataset2test/test9.txt']
+    # filenames = ['dataset3/zero.txt', 'dataset3/one.txt', 'dataset3/two.txt', 'dataset3/three.txt', 'dataset3/four.txt', 'dataset3/five.txt', 'dataset3/six.txt', 'dataset3/seven.txt', 'dataset3/eight.txt', 'dataset3/nine.txt']
 
-    filenames = ['dataset2test/test0.txt', 'dataset2test/test1.txt', 'dataset2test/test2.txt', 'dataset2test/test3.txt', 'dataset2test/test4.txt', 'dataset2test/test5.txt', 'dataset2test/test6.txt', 'dataset2test/test7.txt', 'dataset2test/test8.txt', 'dataset2test/test9.txt']
+    filenames = ['zero.txt', 'one.txt', 'three.txt', 'four.txt', 'five.txt', 'six.txt', 'seven.txt', 'eight.txt', 'nine.txt']
+
 
     # loading inputs with their target
     inputs = []
@@ -255,62 +271,76 @@ if __name__ == '__main__':
 
     # TRAINING !!!
 
-    layer1 = Layer(256, input_size)
-    layer2 = Layer(10, 256)
+    layer1 = Layer(128, input_size)
+    layer2 = Layer(10, 128)
+   
+   
 
     # activation functions
     relu = Relu()
+    relu2 = Relu()
     softmax = Softmax()
 
     loss = Loss()
        
     epoch = 10
-    # for _ in range(epoch): # train on the same data 5 times (epoch)
-    #     for input in inputs:
-    #         data = input.data
-    #         target = input.target
+    for _ in range(epoch): # train on the same data 5 times (epoch)
+        for input in inputs:
+            data = input.data
+            target = input.target
 
         
-    #         # forward
-    #         layer1.forward(data)
-    #         relu.forward_layer(layer1.output)
+            # forward
+            layer1.forward(data)
+            relu.forward_layer(layer1.output)
 
-    #         layer2.forward(relu.output)
-    #         softmax.forward(layer2.output)
+            layer2.forward(relu.output)
+            softmax.forward(layer2.output)
 
 
-    #         # loss
-    #         loss.forward_layer(softmax.output, target)
-    #         # print("Loss", loss.loss)
+            # loss
+            loss.forward_layer(softmax.output, target)
+            # print("Loss", loss.loss)
             
 
-    #         #backwards
-    #         loss.backwards_layer(softmax.output, target)
-    #         layer2.backwards(loss.gradient)
+            #backwards
+            loss.backwards_layer(softmax.output, target)
+            layer2.backwards(loss.gradient)
 
-    #         relu.backward_layer(np.sum(layer2.d_inputs, axis=0)) # would be better to do the average
-    #         layer1.backwards(relu.gradient)
+            relu.backward_layer(np.sum(layer2.d_inputs, axis=0)) # would be better to do the average
+            layer1.backwards(relu.gradient)
 
 
-    #         #update
-    #         layer1.update()
-    #         layer2.update()
+            #update
+            layer1.update()
+            layer2.update()
     
-    # Saving weights
-    # savefile1 = 'layer1weights.csv'
-    # savefile2 = 'layer2weights.csv'
+    print(loss.loss)
+    
+   
+    # weights_save_1 = 'selfweights1.csv'
+    # weights_save_2 = 'selfweights2.csv'
 
-    savefile1 = 'selfweights1.csv'
-    savefile2 = 'selfweights2.csv'
+    # bias_save_1 = 'selfbias1.csv'
+    # bias_save_2 = 'selfbias2.csv'
 
-    # layer1.save(savefile1)
-    # layer2.save(savefile2)
+    weights_save_1 = 'weights1.csv'
+    weights_save_2 = 'weights2.csv'
+
+    bias_save_1 = 'bias1.csv'
+    bias_save_2 = 'bias2.csv'
+    
+
+
+    layer1.save(weights_save_1, bias_save_1)
+    layer2.save(weights_save_2, bias_save_2)
+   
 
 
     # loding data
-    layer1.load(savefile1)
-    layer2.load(savefile2)
-
+    # layer1.load(weights_save_1, bias_save_1)
+    # layer2.load(weights_save_2, bias_save_2)
+  
 
     # lets check our neural network
     correct = 0
@@ -338,7 +368,6 @@ if __name__ == '__main__':
 
         if actual == predicted:
             correct += 1
-
         
     print(f'Accuracy: {correct / number_of_iterations * 100}')
 
