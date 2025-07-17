@@ -32,7 +32,7 @@ The best video I think on the topic since it goes through and example with Softm
 
 ### Notes:
 The accuracy of the model with respect to the 80,000 training examples was >90%. It had a 2 dense layers of 128 and 10 neurons respectively.
-Due to the nature of the hadnwritten example, it had a  ~75% accuray with its 10,000 samples. This is mainly due to the inconsitelty of my hand drawn dataset. It has dense layers of 256 and 10 neurons.
+The accuracy of the UI is about 92%. To ensure this make sure each drawing touches the top and bottom red lines. The dataset is my owen and involes 1000 training samples which were each augmented left, right up and down to create a dataset of 13,000 training samples
 
 To improve this model it would be fun to implement a CNN in the future.
 
