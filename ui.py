@@ -1,9 +1,8 @@
 import tkinter as tk
 import numpy as np
 from nn import Neuron, Layer, Data, Relu, Softmax, Loss
-from get_data import print_array_image, read_data
 
-
+#window
 window_size = '800x600'
 title = "Neural Network"
 
@@ -12,6 +11,7 @@ window.geometry(window_size)
 window.title(title)
 window.configure(bg='white')
 
+# TODO neat font
 font = ('Arial', 32)
 text_font = ('Arial', 16)
 
@@ -26,13 +26,14 @@ prediction = tk.Label(window, textvariable=prediction_text, bg='white', font=tex
 prediction.place(x = 500, y = 100)
 
 
+matrix_size = 28
+matrix = [[0 for _ in range(matrix_size)] for _ in range(matrix_size)]
 
-matrix = [[0 for _ in range(28)] for _ in range(28)]
-
+# Neural network
 input_size = 784
    
-layer1 = Layer(256, input_size)
-layer2 = Layer(10, 256)
+layer1 = Layer(128, input_size)
+layer2 = Layer(10, 128)
 
 # activation functions
 relu = Relu()
@@ -40,71 +41,103 @@ softmax = Softmax()
 
 
 # saves
-savefile1 = 'selfweights1.csv'
-savefile2 = 'selfweights2.csv'
-# savefile1 = 'layer1weights.csv'
-# savefile2 = 'layer2weights.csv'
+weights_save_1 = 'weights1.csv'
+weights_save_2 = 'weights2.csv'
+
+bias_save_1 = 'bias1.csv'
+bias_save_2 = 'bias2.csv'
 
 
 
-layer1.load(savefile1)
-layer2.load(savefile2)
+layer1.load(weights_save_1, bias_save_1)
+layer2.load(weights_save_2, bias_save_2)
 
 
+def draw_border():
 
+    pixel_size = 16
+    padding_width = 3
+    line_width = 22
+    line_height = 22
+
+    start_x = pixel_size * padding_width
+    start_y = pixel_size * padding_width
+
+    # drawing the top line
+    for _ in range(line_width):
+        canvas.create_rectangle(start_x, start_y, start_x + pixel_size, start_y + pixel_size, fill='red', outline='')
+        start_x += 16
+    
+    start_y = pixel_size * 24 # 24 is the y of the bottom left
+    start_x = pixel_size * padding_width
+
+    # drawing the bottom line
+    for _ in range(line_width):
+        canvas.create_rectangle(start_x, start_y, start_x + 16, start_y + 16, fill='red', outline='')
+        start_x += 16
+    
+    # draw the right line
+    start_x = pixel_size * padding_width
+    start_y = pixel_size * padding_width
+    for _ in range(line_width):
+        canvas.create_rectangle(start_x, start_y, start_x + 16, start_y + 16, fill='red', outline='')
+        start_y += pixel_size
+    
+    # draw the left line
+    start_x = pixel_size * 24
+    start_y = pixel_size * padding_width
+    for _ in range(line_width):
+        canvas.create_rectangle(start_x, start_y, start_x + 16, start_y + 16, fill='red', outline='')
+        start_y += pixel_size
+
+        
 
 def draw_pixel(event):
   
     # position in the matrix
-    x = event.x // 16 
-    y = event.y // 16 
+    pixel_size = 16
 
+
+    x = event.x // pixel_size
+    y = event.y // pixel_size
+
+    if (y > 3 ) and y < 24 and x > 3 and x < 24: # prevents from drawing above or below the top and bottom border lines
+      
+        if x < 28 and y < 28: # ensuring drawing on the screen
+            matrix[y][x] = 1
+
+  
+            top_right_x = x * pixel_size
+            top_right_y = y * pixel_size
+
+            bottom_left_x = top_right_x + pixel_size
+            bottom_left_y = top_right_y + pixel_size
+        
+            canvas.create_rectangle(top_right_x, top_right_y, bottom_left_x, bottom_left_y, fill='black')
     
-    if x < 28 and y < 28:
-        matrix[y][x] = 1
+    nn()
 
 
-    top_right_x = x * 16
-    top_right_y = y * 16
-
-    bottom_left_x = top_right_x + 16
-    bottom_left_y = top_right_y + 16
-
-    canvas.create_rectangle(top_right_x, top_right_y, bottom_left_x, bottom_left_y, fill='black')
-
-count = 0
-correct = 0
 def nn(event=None):
-    global correct
-    global count
+    
 
     # need to turn matrix into a row
-    input  = []
-    for row in matrix:
-        for col in row:
-            input.append(int(col))
-    
+    input  = [int(col) for row in matrix for col in row]
     input = np.array([input]).flatten()
 
     # check if the input array is all 0's
     if np.all(input == 0):
         return
 
-    # Adding new training data
-    # pathname = 'four.txt'
-    # add_training_example(pathname, input)
-    # clear_canvas() # used for imputting the data set
-
 
     # nn
-    
-    # forwarding
     layer1.forward(input)
     relu.forward_layer(layer1.output)
     layer2.forward(relu.output)
     softmax.forward(layer2.output)
 
     out = np.argmax(softmax.output)
+
     t = f'Prediction: {out}'
 
     s = [round(float(num), 2) * 100 for num in softmax.output]
@@ -113,7 +146,14 @@ def nn(event=None):
         text.set(f'{i}: {s[i]:.2f}%')
    
     prediction_text.set(t)
- 
+
+    # pathname = 'test9.txt'
+    # add_training_example(pathname, input)
+    # clear_canvas() # used for imputting the data set
+
+
+
+   
 
    
 
@@ -121,16 +161,20 @@ def nn(event=None):
 
 def clear_canvas():
     global matrix
+    global matrix_size
+
     canvas.delete('all')
 
     # also need to clear the matrix
-    matrix = [[0 for _ in range(28)] for _ in range(28)]
+    matrix = [[0 for _ in range(matrix_size)] for _ in range(matrix_size)]
+
+    draw_border() # also need to draw the border back
 
 
 def add_training_example(filename, arr):
     with open(filename, 'a') as af:
 
-        arr = [str(num) for num in arr]
+        arr = [str(num) for num in arr] # convert matrix into 1d array
        
         s = ''.join(arr)
         af.write(s)
@@ -149,6 +193,7 @@ canvas.place(x=20, y=76 + 20)
 canvas.bind("<ButtonPress-1>", draw_pixel)
 canvas.bind('<B1-Motion>', draw_pixel)
 
+draw_border()
 
 
 
