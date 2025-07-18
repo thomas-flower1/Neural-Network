@@ -21,6 +21,7 @@ The best video I think on the topic since it goes through and example with Softm
 - What I was finding the derivative with respects to, just rembering to always derive the 'inputs' with respect to the loss function
 - The output in the middle of one of my loss functions was a matrix of the input gradients - this wasn't mentioned much in the videos (if so i missed it), the solution is to just sum them or find the average and it returns a vector you can pass into the next layer
 - Resetting the gradients for each new sample
+- Forgetting to save my biases...
 
 ### Credits
 - Dataset used: [Kraggle](https://www.kaggle.com/datasets/jcprogjava/handwritten-digits-dataset-not-in-mnist)
